@@ -1,5 +1,5 @@
 name: CI | Experimento A/B e parecer
-on: [workflow_dispatch]
+on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read
 jobs:
@@ -15,4 +15,7 @@ jobs:
       - run: python -m pip install -r requirements.txt
       - run: python -m pytest tests -q
       - run: python src/experiment.py
+      - run: python src/sensitivity.py
       - run: python src/decision_memo.py
+      - run: python src/design_simulation.py --reps 300 --per-arm 500
+      - run: python src/advanced_design.py --reps 100 --clusters 12 --size 10
