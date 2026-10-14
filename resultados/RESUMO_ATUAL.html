@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Experimento A/B • Decisão</title>
+<style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;margin:0;background:#0b1421;color:#f4f7fb;line-height:1.55}
+main{max-width:960px;margin:auto;padding:50px 22px 90px}.eyebrow{font-size:12px;color:#69d8bd;text-transform:uppercase;letter-spacing:2px}h1{font-size:clamp(30px,5vw,52px);letter-spacing:-1.5px;margin:6px 0 3px}p{color:#b6c5d9}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:13px;margin:35px 0}.metric,details{background:#132235;border:1px solid #284058;border-radius:14px;padding:19px}.metric span{display:block;color:#b6c5d9;font-size:13px}.metric strong{display:block;color:#fff;font-size:24px;margin-top:8px;overflow-wrap:anywhere}
+details{margin:12px 0}summary{font-weight:650;cursor:pointer}pre{color:#c0e0e7;font-size:13px;overflow:auto;white-space:pre-wrap;word-break:break-word}.note{border-left:3px solid #69d8bd;padding:10px 18px;background:#102535;border-radius:4px}footer{font-size:12px;margin-top:30px;color:#91a5be}</style></head>
+<body><main><div class="eyebrow">Portfólio de Dados · Execução Local</div><h1>Experimento A/B • Decisão</h1><p>Plano prévio | SRM | Guardrail | Dados sintéticos</p><div class="metrics"><div class="metric"><span>A — Conversão</span><strong>7.84%</strong></div><div class="metric"><span>B — Conversão</span><strong>10.08%</strong></div><div class="metric"><span>Lift relativo</span><strong>28.55%</strong></div><div class="metric"><span>Amostra total</span><strong>16000</strong></div></div><div class="note">Rejeitar adoção automática quando segurança do guardrail não foi demonstrada, mesmo com ganho primário.</div><h2>Evidências da execução</h2><details open><summary>Decisão</summary><pre>&quot;REVISAR: benefício primário, mas segurança do guardrail ainda não demonstrada&quot;</pre></details><details open><summary>Validade</summary><pre>{
+  &quot;srm_pass&quot;: true,
+  &quot;sample_complete&quot;: true,
+  &quot;horizon_complete&quot;: true
+}</pre></details><details open><summary>Intervalo de confiança e p-valor</summary><pre>{
+  &quot;rate_A&quot;: 0.078375,
+  &quot;rate_B&quot;: 0.10075,
+  &quot;difference_absolute&quot;: 0.022375000000000006,
+  &quot;relative_lift&quot;: 0.2854864433811803,
+  &quot;ci95&quot;: [
+    0.013534021145373675,
+    0.031232235547551147
+  ],
+  &quot;p_value&quot;: 7.207094074963061e-07,
+  &quot;method&quot;: &quot;z pooled; IC Newcombe/Wilson&quot;
+}</pre></details><details open><summary>Guardrail de descadastros</summary><pre>{
+  &quot;rate_A&quot;: 0.01025,
+  &quot;rate_B&quot;: 0.014875,
+  &quot;difference_absolute&quot;: 0.004624999999999999,
+  &quot;relative_lift&quot;: 0.45121951219512185,
+  &quot;ci95&quot;: [
+    0.001171798092328678,
+    0.00813464287650406
+  ],
+  &quot;p_value&quot;: 0.008631171908073169,
+  &quot;method&quot;: &quot;z pooled; IC Newcombe/Wilson&quot;
+}</pre></details><footer>Relatório gerado diretamente a partir dos JSONs atuais. Não são métricas de clientes reais.</footer></main></body></html>
