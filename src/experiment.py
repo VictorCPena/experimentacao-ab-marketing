@@ -228,8 +228,8 @@ def main():
     observation_days = args.observation_days if args.observation_days is not None else 28
     if observation_days < 0:
         parser.error('--observation-days deve ser não negativo')
-    output = ROOT / "resultados"
-    output.mkdir(exist_ok=True)
+    output = ROOT / "work/evaluation"
+    output.mkdir(parents=True, exist_ok=True)
     # Plano salvo antes de gerar e analisar os resultados sintéticos.
     (output / "plano_previo.json").write_text(json.dumps(plan(), indent=2, ensure_ascii=False))
     frame = pd.read_csv(args.input) if args.input else generate()

@@ -16,8 +16,11 @@ def memo(result: dict) -> str:
     threshold = result["plan"]["guardrail_max_absolute_increase"]
     validity = result["validity"]
     valid = all(validity.values())
+    source = result.get("synthetic_data", "external_unverified")
+    source_note = ("> Laboratório com dados sintéticos. Não representa teste em campanha real."
+                   if source is True else "> Fonte externa ou não informada; procedência e randomização não verificadas.")
     lines = ["# Parecer de experimento A/B", "",
-             "> Laboratório com dados sintéticos. Não representa teste em campanha real.", "",
+             source_note, "",
              f"**Decisão:** {result['decision']}", "",
              "## Resultado principal", "",
              f"- Usuários: A = {result['n_A']:,}; B = {result['n_B']:,}.",
@@ -34,15 +37,15 @@ def memo(result: dict) -> str:
              "Não promover automaticamente a variante B. Avaliar risco do guardrail e",
              "considerar novo experimento, com tamanho e horizonte planejados previamente.",
              "", "## Limites", "",
-             "Inferências restritas a dados sintéticos e às hipóteses de randomização. IC",
+             "Inferências restritas à população analisada e às hipóteses de randomização. IC",
              "convencional não cobre inspeções repetidas sem plano sequencial.", ""]
     return "\n".join(lines)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--analysis", type=Path, default=ROOT / "resultados/analise.json")
-    parser.add_argument("--output", type=Path, default=ROOT / "resultados/PARECER_DECISAO.md")
+    parser.add_argument("--analysis", type=Path, default=ROOT / "work/evaluation/analise.json")
+    parser.add_argument("--output", type=Path, default=ROOT / "work/evaluation/PARECER_DECISAO.md")
     args = parser.parse_args()
     data = json.loads(args.analysis.read_text())
     args.output.parent.mkdir(parents=True, exist_ok=True)

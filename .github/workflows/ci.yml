@@ -1,5 +1,5 @@
 name: CI | Experimento A/B e parecer
-on: [push, pull_request, workflow_dispatch]
+on: [workflow_dispatch]
 permissions:
   contents: read
 jobs:
@@ -16,10 +16,3 @@ jobs:
       - run: python -m pytest tests -q
       - run: python src/experiment.py
       - run: python src/decision_memo.py
-      - run: python src/summary_html.py
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: evidencias-ab
-          path: resultados/
-          if-no-files-found: warn
