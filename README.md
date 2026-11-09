@@ -1,188 +1,101 @@
-# Experimento A/B de Marketing | Ganhar conversão não basta
+# Causal Impact & Experimentation Lab
 
-**Estatística aplicada · Testes de hipótese · Intervalos de confiança · Guardrails · Python · Jupyter**
+Estimate incremental advertising visits and compare targeting policies using randomized Criteo uplift data.
 
-> **Decisão de negócio:** a variante B melhora a conversão. Mas devemos adotá-la se também pode aumentar os descadastros?
+**Local evidence.** Cross-fitted visit ATE of +0.870 percentage points across 139,815 sampled users. [Run record](evidence/causal_results.json).
 
-Este projeto é uma **análise de decisão**, não uma API nem um dashboard. Um notebook reproduz o desenho, a checagem de validade, a inferência e a recomendação final. O dataset é inteiramente sintético.
+Based on [experimentacao-ab-marketing](https://github.com/VictorCPena/experimentacao-ab-marketing/tree/e3c03307c5599778f0e5dfecfd0759996c395e2e).
 
-## Evidência de simulação — Mac local, 14/10/2026
+## 1. Problem Statement
 
-**23/23 testes aprovados** e três etapas executadas: análise da fixture (`make analyze`), smoke avançado (`make advanced-smoke`) e estudo Monte Carlo maior (`make advanced-design`). Saídas, configuração e riscos interpretativos: [`docs/VALIDACAO_MAC_2026-10-14.md`](docs/VALIDACAO_MAC_2026-10-14.md).
+Estimate incremental advertising outcomes with uncertainty, then compare targeting models without confusing prediction with causal impact. The existing synthetic A/B guardrail, sequential-testing and cluster-experiment studies are retained.
 
-| Desenho simulado | Resultado observado |
-| --- | --- |
-| Horizonte fixo, sem efeito verdadeiro | **5,00%** de rejeições, 300 réplicas |
-| Quatro consultas ingênuas (*peeking*) | **11,67%** de rejeições |
-| Bonferroni com gasto incremental de alfa | **3,00%** de rejeições |
-| Aleatorização por 25 clusters/braço | **3,33%** de falsos positivos pelo Welch por cluster |
-| Ignorar esses clusters | **17,00%** de falsos positivos |
-| Liberação incorreta de guardrail inseguro | **1,00%**, no cenário e nas regras simulados |
-
-Essas frequências Monte Carlo **variam com a seed e com o número de réplicas**; não são taxas universais. A inferência sequencial usa Bonferroni conservador, não o teste O'Brien–Fleming exato. A análise original mantém a decisão **`REVISAR`**: ganhar conversão não basta para demonstrar a segurança do descadastro.
-
-## Caso estudado
-
-Experimento A/B simulado com **16.000 usuários** (8.000 por grupo) e **28 dias** de observação. Métrica primária: conversão. Métrica de proteção (*guardrail*): descadastro, com limite pré-definido de piora de **0,5 ponto percentual**.
-
-### O que os dados mostraram
-
-| Medida | Controle A | Variante B | Diferença |
-| --- | ---: | ---: | ---: |
-| Conversão | 7,84% | 10,08% | **+2,24 p.p.** |
-| Descadastro | 1,03% | 1,49% | **+0,46 p.p.** |
-
-- Conversão: **+28,55% de lift relativo**; IC95% da diferença aproximadamente **+1,35 a +3,12 p.p.**; `p ≈ 7,21 × 10⁻⁷`.
-- Descadastro: embora a piora observada seja +0,46 p.p., o **limite superior do IC95% é +0,813 p.p.**, acima dos +0,5 p.p. tolerados pelo plano.
-- Validade: SRM, tamanho amostral e horizonte foram aprovados no cenário simulado.
-
-**Decisão do protocolo: `REVISAR`**. Há benefício estatístico na conversão, mas a margem de segurança para descadastros **não foi demonstrada**. A decisão não é “B ganhou, faça deploy”. Os intervalos apresentados são nominais, não simultâneos, e não devem ser transportados para campanhas reais.
-
-## Por que a análise é mais do que um p-valor
-
-1. **Planejamento antes dos resultados:** métrica primária, MDE de +1,5 p.p., α=5%, poder=80%, horizonte e guardrail.
-2. **Validade da comparação:** verificações de duplicidade, alocação, SRM, amostra e período observado.
-3. **Estimativa do efeito:** diferença de proporções, teste z *pooled*, IC Newcombe/Wilson.
-4. **Métricas secundárias:** receita com Welch, bootstrap e ANCOVA com covariável pré-teste; ajuste de Holm.
-5. **Disciplina de decisão:** limite superior do intervalo do guardrail e simulação de *peeking* para ilustrar risco de olhar os resultados repetidamente.
-
-O plano JSON é salvo pelo script antes da geração e análise da simulação; **não é evidência de pré-registro externo**.
-
-## Explorar o notebook
-
-Requer **Python 3.12**. Na raiz do projeto:
-
-```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements-notebook.txt
-.venv/bin/python -m jupyterlab notebooks/analise_experimento.ipynb
-```
-
-Execute as células de cima para baixo. O notebook foi entregue **sem saídas gravadas** para obrigar a reprodução da análise. Ele gera suas tabelas e gráficos na própria sessão; não há HTML estático publicado.
-
-### Rodar sem Jupyter
-
-```bash
-.venv/bin/python -m pip install -r requirements.txt
-make test
-make analyze
-.venv/bin/python src/decision_memo.py
-```
-
-O CLI grava artefatos intermediários em `work/evaluation/`, ignorados pelo Git. `decision_memo.py` exporta um parecer Markdown opcional. Em dados externos, use `src/experiment.py --input caminho.csv --observation-days 28` e documente efetivamente a randomização e o período observado.
-
-## Para quem lê o código
-
-- [`notebooks/analise_experimento.ipynb`](notebooks/analise_experimento.ipynb): narrativa investigativa e decisão.
-- `src/experiment.py`: funções de tamanho amostral, checagens e inferência.
-- `src/decision_memo.py`: conversão opcional do resultado em parecer técnico.
-- [`docs/METODOLOGIA.md`](docs/METODOLOGIA.md): premissas, fórmulas e limitações.
-- `tests/`: cenários de validade, estatística e guardrails.
-
-**Limite do estudo base:** os dados foram simulados; passar no SRM não prova randomização real e o caso original não estima ROI ou interferência de rede. A v1.6 adiciona um laboratório separado de randomização por clusters e dependência entre métricas, sem transformar a fixture original em dados observacionais reais. [Workflow de CI](https://github.com/VictorCPena/experimentacao-ab-marketing/actions/workflows/ci.yml) disponível para push, pull request ou disparo manual.
-
-## Sensibilidade e magnitude dos efeitos (v1.4)
-
-O teste principal toma uma decisão com base no plano; uma análise posterior **não tem permissão de alterar os critérios de adoção**. O novo [`src/sensitivity.py`](src/sensitivity.py) ajuda a explicar a consequência prática de um guardrail apertado.
+## 2. Architecture
 
 ```mermaid
 flowchart TD
-  A[Plano: conversão + margem de descadastro] --> B[Checar SRM, amostra e horizonte]
-  B --> C[Estimar efeito e incerteza]
-  C --> D{Benefício primário suficiente?}
-  D -- Não --> E[Não adotar com base no teste]
-  D -- Sim --> F{Limite superior do guardrail <= margem?}
-  F -- Sim --> G[Candidato à adoção]
-  F -- Não --> H[REVISAR]
-  H --> I[Explorar cenários sem mudar o plano]
+DATA["Criteo unbiased v2.1"] --> SAMPLE["Seeded full-file sample"]
+SAMPLE --> AB["A/B integrity and intervals"]
+SAMPLE --> DR["Cross-fitted AIPW and IPW"]
+SAMPLE --> UPLIFT["Honest S/T/X targeting comparison"]
+AB --> APP["Analytical dashboard"]
+DR --> APP
+UPLIFT --> APP
 ```
 
-### Escala hipotética para 10 mil usuários
+A separate real county panel supports a single-cohort DiD analysis. The causal DAG and assumptions are in `docs/causal_dag.md`; post-treatment exposure is never an adjustment covariate.
 
-| Medida ilustrativa, baseada na fixture | Estimativa |
-| --- | ---: |
-| Conversões adicionais | **~224** |
-| Descadastros adicionais | **~46** |
-| Conversões adicionais, IC95% nominal escalado | ~135 a 312 |
-| Descadastros adicionais, IC95% nominal escalado | ~12 a 81 |
+## 3. Tech Stack
 
-Isso **não é uma previsão de campanha**, porque o cenário é sintético e a projeção aplica taxas constantes. O limite superior de descadastros de ~81 por 10 mil excede o limite de 50 por 10 mil; por isso a decisão não é implementação automática.
+Python, NumPy, Pandas, SciPy, scikit-learn, statsmodels, Streamlit, pytest. Executed optional comparisons use DoWhy, EconML and pyreadr; no PyMC dependency was added because no Bayesian model was needed for the defined estimands.
 
-**Amostra aproximada por braço para comprovar o guardrail** sob três cenários de aumento *verdadeiro assumido* (aproximação normal unilateral, alfa 5%, poder 80%):
+## 4. Dataset & Data Provenance
 
-| Hipótese de aumento em descadastro | Tamanho ilustrativo por braço |
-| --- | ---: |
-| 0,0 p.p. | ~5 mil |
-| 0,2 p.p. | ~15 mil |
-| 0,4 p.p. | ~150 mil |
+[Criteo Uplift Prediction Dataset](https://ailab.criteo.com/criteo-uplift-prediction-dataset/) unbiased v2.1; 13,979,592 source users; seed-42 Bernoulli 1% sample yielded 139,815 users. The complete file is streamed; taking the first rows is deliberately avoided. Dataset license: **CC BY-NC-SA 4.0**, distinct from software licensing. See `DATA_LICENSE.md`. No commercial data redistribution is authorized by this repository.
 
-Ao aproximar-se da margem de **0,5 p.p.**, a exigência de amostra aumenta fortemente. Esses valores são educativos e pós-hoc, inadequados como plano definitivo sem checar eventos raros, múltiplos indicadores e incerteza da taxa de referência.
+The real DiD case uses [did::mpdta](https://bcallaway11.github.io/did/reference/mpdta.html), a 500-county 2003–2007 teen-employment panel from Callaway & Sant’Anna (2021). The analysis uses only the 2006 treatment cohort and never-treated controls. The package distributes data under GPL (>=2); retain attribution and upstream terms. Raw data are obtained by scripts rather than bundled as a new commercial dataset.
+
+## 5. Setup & Installation
+
+Original validated platform: Linux x86_64 with Python 3.12. The user also executed the original 28 tests and both optional studies on an Intel Mac with Python 3.13. The UI correction adds six tests executed on Linux. A user-supplied Mac browser snapshot subsequently confirmed the dashboard render with the actual 139,815-user result and the default sample-size calculation. The captured selection was visit. See `evidence/mac-dashboard-20261109/result.json`. From this repository directory:
 
 ```bash
-make analyze
-make sensitivity
-.venv/bin/python src/decision_memo.py
-cat work/evaluation/sensibilidade.json
+PYTHON_BIN=python3.12 bash scripts/setup.sh
+source .venv/bin/activate
 ```
 
-A sensibilidade testa cenários de taxa-base igual a zero sem fabricar estimativas: retorna `null` com explicação quando a aproximação não é aplicável. Documento metodológico: [`docs/SENSIBILIDADE_E_RECOMENDACAO.md`](docs/SENSIBILIDADE_E_RECOMENDACAO.md).
-
-### Decisão de negócio que este portfólio demonstra
-
-A hipótese estatística de ganho na conversão **não é sinônimo de autorização de lançamento**. O risco do guardrail precisa ser quantificado com incerteza, e uma mudança em critérios só pode ocorrer em **novo experimento pré-planejado**. Não há demonstração de ROI em dados reais.
-
----
-
-## v1.5: simular a qualidade da decisão antes de ver os dados
-
-Os resultados da fixture indicam **REVISAR**, mas um bom projeto de experimentação também pergunta: *quão confiável seria o procedimento estatístico se repetíssemos o teste sob efeitos verdadeiros conhecidos?*
-
-[`src/design_simulation.py`](src/design_simulation.py) usa Monte Carlo de resultados binomiais com seed fixa para explorar:
-
-- **Erro tipo I** quando não existe efeito de conversão (teste do plano de horizonte fixo).
-- **Inflação por peeking** ao declarar “significativo” se alguma das quatro olhadas tiver `p < 0,05`, sem correção sequencial — exemplo deliberadamente inadequado.
-- **Poder de detecção** quando o ganho verdadeiro é o MDE pré-definido de 1,5 p.p.; também informa a fração que respeita o critério de efeito mínimo observado.
-- **Segurança do guardrail** em cenários de aumento verdadeiro seguro e inseguro de descadastro: porcentagem de simulações em que o limite superior Newcombe/Wilson fica abaixo da margem.
-
-```mermaid
-flowchart TD
-    A[Plano: alfa, MDE, margem] --> B[Cenários com efeito verdadeiro conhecido]
-    B --> C[Gerar amostras com seed]
-    C --> D[Executar teste de horizonte fixo]
-    C --> E[Executar peeking ingênuo]
-    C --> F[Verificar limite do guardrail]
-    D --> G[Comparar erro/poder]
-    E --> G
-    F --> G
-    G --> H[Limitações; critérios do plano intactos]
-```
+Direct dependencies are pinned in `requirements-portfolio.txt`. `requirements-lock.txt` records the tested Linux dependency closure. The full data path fetches public datasets and requires internet access on its first run. No paid API key or cloud billing is required.
 
 ```bash
-make test
-make analyze
-make sensitivity
-make simulate       # 2.000 simulações; 8.000 pessoas por grupo
+python -m pip install -r requirements-causal-optional.txt
 ```
 
-O resultado fica em `work/evaluation/design_simulation.json`, junto dos cenários e **sem alterar** a decisão do teste da fixture. Em CI, a versão curta (`make simulate-smoke`) apenas verifica que a simulação é reproduzível, sem usar variação de Monte Carlo como gate arbitrário.
+The optional profile is required for the DoWhy/EconML and real-panel studies. Core AIPW does not require those libraries. Intel macOS pins Numba 0.62.1 / llvmlite 0.45.1 and requires binary wheels for these packages, avoiding an accidental LLVM source build. These constraints apply only to that platform; Python 3.14 is outside this optional profile.
 
-**Limites da simulação v1.5:** braços independentes e métricas geradas separadamente. A v1.6 traz um módulo avançado separado para métricas correlacionadas, clusters e correção sequencial conservadora; nenhum dos estudos substitui pré-registro externo ou cálculo de poder conjunto do protocolo de adoção. Consulte [`docs/SIMULACAO_DE_DECISAO.md`](docs/SIMULACAO_DE_DECISAO.md).
-
-### Evidência de simulação do desenho
-
-Com 2.000 réplicas de 8.000 usuários por braço e seed 42, a taxa empírica de falso positivo sob H0 foi **4,60% com teste final** e **11,35% com quatro olhadas ingênuas**. Para efeito verdadeiro de +1,5 p.p., o poder nominal do p-valor foi **92,65%**, mas apenas **50,65%** também superaram a exigência de MDE **observado**. São resultados sintéticos e não simulam a regra conjunta de adoção. Detalhes: [`docs/VALIDACAO_LOCAL_V15.md`](docs/VALIDACAO_LOCAL_V15.md).
-
----
-
-## v1.6 — inferência robusta a clusters e monitoramento sequencial
-
-A versão original trata participantes como unidades independentes. A versão avançada adiciona experimentos em que **clusters inteiros são randomizados**, as duas métricas binárias compartilham choques latentes e olhadas intermediárias gastam um **orçamento explícito de alfa**.
+## 6. Running Locally
 
 ```bash
-make advanced-smoke   # CI: 100 réplicas com clusters pequenos
-make advanced-design  # estudo: 300 réplicas, 25 clusters/braço, 25 pessoas/cluster
+python -m causal_lab.data
+python -m causal_lab.demo
+python -m streamlit run causal_lab/dashboard.py --server.address 127.0.0.1
 ```
 
-O script compara inferência ingênua por usuário versus **Welch sobre médias de cluster** e analisa a probabilidade de aprovar erroneamente um guardrail inseguro. Para repetição de análises, compara horizonte fixo, *peeking* ingênuo e limiares conservadores de Bonferroni com função de gasto inspirada em O'Brien–Fleming. **Não é uma implementação do teste conjunto OBF exato.**
+With the optional dependencies installed, run the estimator comparison and the real-panel case separately.
 
-**Evidência sob condições sintéticas (300 réplicas, seeds 42/51):** falso positivo ignorando clusters ~17%, com cluster Welch ~3,3%; na simulação sequencial, *peeking* ~11,7% versus ~3% com alocação conservadora de alfa. Os percentuais são Monte Carlo, não estimativas de campanhas reais nem garantias de erro para outros cenários. Veja [hipóteses e método](docs/CLUSTERS_E_SEQUENCIAL.md).
+```bash
+python -m causal_lab.library_comparison
+python -m causal_lab.real_did
+```
+
+A local complete Criteo gzip can be supplied with `causal_lab.data --input PATH`. The sampler writes row IDs before sampling, checks duplicates and records raw/sample SHA256. It excludes `exposure` from model inputs.
+
+## 7. Testing
+
+```bash
+python -m pytest -q
+python -m ruff check causal_lab tests/test_pro_causal.py
+```
+
+Tests cover randomized known-effect recovery and interval inclusion, a known-truth DiD simulation, invalid panels and duplicate units, Holm correction, uplift ranking behavior, and the preserved A/B/cluster/sequential tests. Known-truth test success does not establish every finite-sample interval has nominal coverage. The dashboard is a local analytical application, not an image mockup. Streamlit AppTest exercises exact slider precision, a changed MDE, and conversion selection while fixed-primary-outcome panels remain labeled visit. The planning function validates inputs and uses the ceiling so the integer sample size reaches the requested approximate power.
+
+## 8. Performance Results
+
+On the real 139,815-user sample, the three-fold cross-fitted visit ATE was **0.008703**, 95% interval **[0.006157, 0.011249]** in absolute probability units. This is a sampled published-trial ITT estimate, not a client revenue result. See the [CATE calibration chart](evidence/cate_calibration.png) and [statistical results](evidence/causal_results.json) for frequentist outcomes, IPW, overlap, balance, Holm, planning, bias-tipping scenarios, held-out quintiles and fixed-model bootstrap AUUC uncertainty. DoWhy/EconML use a separate reproducible 20,000-row subsample; their point estimates are not directly interchangeable with full-sample AIPW.
+
+## 9. Engineering Decisions
+
+Randomization integrity cannot be proven by covariate balance. Exact intended allocation is unavailable: the published rounded 0.85 treatment ratio is not used to certify SRM. Primary real-data outcome is visit; conversion is secondary and rare. The A/B selector changes only its own panel. AIPW, heterogeneity and targeting panels explicitly retain the primary outcome. Planning uses probability units: MDE 0.005 means 0.5 percentage points. At baseline 0.05, two-sided alpha 0.05, power 0.80 and equal allocation, the requirement is 31,218 observations per arm (normal approximation, rounded up). AIPW uses out-of-fold propensity and outcome models. S/T/X meta-learners are fitted before their holdout targeting scores are evaluated. Predictive AUC/Brier and causal gain are reported separately. Heterogeneity is exploratory; anonymized features do not identify deployable business segments.
+
+## 10. Failure Handling
+
+Invalid schema, duplicate experimental units, non-finite values and invalid panel structures raise errors. Positivity diagnostics and clipped-weight fraction are recorded. Bootstrap intervals condition on fitted models and exclude model-training uncertainty. DiD rejects unbalanced/invalid two-period designs; the real panel's state assignment level is used for clustering.
+
+## 11. Limitations
+
+No advertising spend, revenue or unsubscribe outcome is available in Criteo. The project therefore refuses to certify profitability or real business safety guardrails. Existing synthetic guardrails remain clearly labeled. The real DiD case has **three treated states**: conventional state-cluster intervals are displayed as non-confirmatory; pre-period placebo differences cannot prove parallel trends. No cross-sectional Criteo DiD is performed. No unsupported claim of causal robustness to arbitrary unmeasured confounding is made. The dashboard does not implement an experiment assignment service.
+
+## 12. Future Improvements
+
+Blind CATE replication across independent trials; wider nuisance-model sensitivity; wild-cluster/randomization inference for the policy panel; a genuinely measured cost and safety outcome; prospectively specified experimental decision policies. Review dataset reuse terms before any commercial deployment.
+
+The [original synthetic workflow guide](docs/README_ORIGINAL.md) remains available.

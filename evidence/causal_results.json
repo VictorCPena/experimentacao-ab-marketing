@@ -1,0 +1,259 @@
+{
+  "n": 139815,
+  "treated": 118905,
+  "control": 20910,
+  "outcome": "visit",
+  "ab": {
+    "visit": {
+      "rate_A": 0.03773314203730273,
+      "rate_B": 0.048946638072410745,
+      "difference_absolute": 0.011213496035108017,
+      "relative_lift": 0.29717896336388927,
+      "ci95": [
+        0.008282442761589529,
+        0.014003651903972295
+      ],
+      "p_value": 1.8365026760463896e-12,
+      "method": "z pooled; IC Newcombe/Wilson"
+    },
+    "conversion": {
+      "rate_A": 0.001721664275466284,
+      "rate_B": 0.002960346495101131,
+      "difference_absolute": 0.001238682219634847,
+      "relative_lift": 0.7194679225712404,
+      "ci95": [
+        0.0005157804231090484,
+        0.0018166444974549198
+      ],
+      "p_value": 0.0016896905983075229,
+      "method": "z pooled; IC Newcombe/Wilson"
+    }
+  },
+  "holm": {
+    "visit": 3.673005352092779e-12,
+    "conversion": 0.0016896905983075229
+  },
+  "aipw": {
+    "estimate": 0.008703281473553032,
+    "standard_error": 0.001298908041858357,
+    "ci95": [
+      0.006157421711510652,
+      0.011249141235595412
+    ],
+    "propensity_min": 0.7819723663975254,
+    "propensity_max": 0.9279106895473376,
+    "clipped_fraction": 0.0,
+    "method": "3-fold cross-fitted AIPW; estimated propensity",
+    "max_inverse_weight": 11.955282514342377
+  },
+  "ipw": {
+    "estimate": 0.008457875805620532,
+    "standard_error": 0.0015612304331583055,
+    "ci95": [
+      0.0053978641566302535,
+      0.011517887454610812
+    ]
+  },
+  "balance_smd": {
+    "f0": -0.0047680111968840784,
+    "f1": 0.023281743154737453,
+    "f2": -0.013994533794946232,
+    "f3": -0.04353168249218002,
+    "f4": 0.01229872864880592,
+    "f5": -0.02270741230859891,
+    "f6": -0.030533742816039728,
+    "f7": 0.009879208747649996,
+    "f8": -0.020429123193870587,
+    "f9": 0.02802087267328652,
+    "f10": 0.013118429528766523,
+    "f11": -0.010501350038343911
+  },
+  "planning": {
+    "baseline_visit": 0.03773314203730273,
+    "mde_absolute": 0.005,
+    "control_required": 14241.676567175366,
+    "treated_required": 80985.48791104672,
+    "power": 0.8
+  },
+  "srm": {
+    "status": "not assessable",
+    "reason": "Exact intended allocation not supplied; published .85 is rounded; do not use observed split to certify SRM"
+  },
+  "comparison": {
+    "T": {
+      "auuc_bootstrap_ci95_fixed_model": [
+        0.0017205067943080977,
+        0.00613256675969315
+      ],
+      "bootstrap_scope": "100 user resamples, held-out fixed scores; excludes training uncertainty",
+      "auuc_above_random": 0.004190213016579594,
+      "top20_itt": {
+        "estimate": 0.0475322779146783,
+        "standard_error": 0.010540931645336654,
+        "ci95": [
+          0.026872051889818463,
+          0.06819250393953814
+        ]
+      },
+      "definition": "HT gain minus random targeting; estimated treatment propensity"
+    },
+    "S": {
+      "auuc_bootstrap_ci95_fixed_model": [
+        0.0010318206318466194,
+        0.005383934539556026
+      ],
+      "bootstrap_scope": "100 user resamples, held-out fixed scores; excludes training uncertainty",
+      "auuc_above_random": 0.003358522318232049,
+      "top20_itt": {
+        "estimate": 0.046350858769743264,
+        "standard_error": 0.011656628771460517,
+        "ci95": [
+          0.02350386637768065,
+          0.06919785116180588
+        ]
+      },
+      "definition": "HT gain minus random targeting; estimated treatment propensity"
+    },
+    "X": {
+      "auuc_bootstrap_ci95_fixed_model": [
+        0.0016416304882666112,
+        0.00606525207360319
+      ],
+      "bootstrap_scope": "100 user resamples, held-out fixed scores; excludes training uncertainty",
+      "auuc_above_random": 0.0037605033060506814,
+      "top20_itt": {
+        "estimate": 0.0514391879780455,
+        "standard_error": 0.010029494082033524,
+        "ci95": [
+          0.031781379577259794,
+          0.07109699637883121
+        ]
+      },
+      "definition": "HT gain minus random targeting; estimated treatment propensity"
+    },
+    "predictive": {
+      "auuc_bootstrap_ci95_fixed_model": [
+        0.002345159201456563,
+        0.007131969798653326
+      ],
+      "bootstrap_scope": "100 user resamples, held-out fixed scores; excludes training uncertainty",
+      "auuc_above_random": 0.0048642815994806516,
+      "top20_itt": {
+        "estimate": 0.053190086617337345,
+        "standard_error": 0.013088065389451268,
+        "ci95": [
+          0.027537478454012863,
+          0.07884269478066183
+        ]
+      },
+      "definition": "HT gain minus random targeting; estimated treatment propensity",
+      "auc": 0.9385264602595661,
+      "brier": 0.03055681785103797
+    }
+  },
+  "effect_calibration": [
+    {
+      "quintile": 1,
+      "n": 8389,
+      "predicted_cate": -0.014168905673387275,
+      "estimate": 0.0037579255840978687,
+      "standard_error": 0.0082970185891485,
+      "ci95": [
+        -0.01250423085063319,
+        0.02002008201882893
+      ]
+    },
+    {
+      "quintile": 2,
+      "n": 8389,
+      "predicted_cate": -0.00022736493475107085,
+      "estimate": 0.0006431905188582011,
+      "standard_error": 0.0008820271841493481,
+      "ci95": [
+        -0.0010855827620745212,
+        0.002371963799790923
+      ]
+    },
+    {
+      "quintile": 3,
+      "n": 8389,
+      "predicted_cate": -9.875132850865679e-05,
+      "estimate": 0.0010206727733918315,
+      "standard_error": 0.0009517436439749298,
+      "ci95": [
+        -0.0008447447687990309,
+        0.0028860903155826937
+      ]
+    },
+    {
+      "quintile": 4,
+      "n": 8389,
+      "predicted_cate": 0.0009790942823860622,
+      "estimate": 0.004899950695551352,
+      "standard_error": 0.002682142002056283,
+      "ci95": [
+        -0.00035704762847896254,
+        0.010156949019581666
+      ]
+    },
+    {
+      "quintile": 5,
+      "n": 8389,
+      "predicted_cate": 0.051502674290055825,
+      "estimate": 0.0475322779146783,
+      "standard_error": 0.010540931645336652,
+      "ci95": [
+        0.026872051889818466,
+        0.06819250393953814
+      ]
+    }
+  ],
+  "sensitivity": {
+    "additive_unmeasured_bias": [
+      {
+        "bias": 0,
+        "adjusted_effect": 0.008703281473553032
+      },
+      {
+        "bias": 0.001,
+        "adjusted_effect": 0.007703281473553032
+      },
+      {
+        "bias": 0.005,
+        "adjusted_effect": 0.003703281473553032
+      },
+      {
+        "bias": 0.01,
+        "adjusted_effect": -0.0012967185264469681
+      }
+    ],
+    "interpretation": "Hypothetical bias tipping exercise; not a bound inferred from data"
+  },
+  "business_guardrail": {
+    "status": "unavailable",
+    "reason": "Criteo has no unsubscribe, advertising cost or revenue; visit/conversion cannot certify profitability"
+  },
+  "decision": "Research estimates only; no rollout without exact assignment protocol, costs and safety outcomes",
+  "assumptions": [
+    "Published randomized assignment; intention-to-treat, NEVER condition on exposure",
+    "SUTVA, no interference and outcome measurement integrity cannot be verified from anonymous rows",
+    "Quintiles exploratory, no confirmatory CATE significance",
+    "No DiD on cross-sectional Criteo"
+  ],
+  "did_separate_simulation": {
+    "synthetic": true,
+    "true_effect": 2,
+    "estimate": 1.9588451159599642,
+    "ci95": [
+      1.8806827919891185,
+      2.03700743993081
+    ],
+    "assumptions": [
+      "Parallel trends",
+      "No anticipation",
+      "Stable composition",
+      "No spillover"
+    ],
+    "warning": "Two periods cannot test pre-trends; causality is conditional on these assumptions"
+  }
+}

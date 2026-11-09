@@ -1,0 +1,71 @@
+{
+  "dataset": "did::mpdta, Callaway & Sant Anna (2021)",
+  "source_url": "https://raw.githubusercontent.com/bcallaway11/did/master/data/mpdta.rda",
+  "real_data": true,
+  "rows": 698,
+  "counties": 349,
+  "states": 19,
+  "treated_states": [
+    12,
+    27,
+    55
+  ],
+  "estimand": "2006 cohort ATT in log teen employment, 2005 to 2006 vs never treated, unconditional parallel trends",
+  "estimate_log_points": -0.0045946069528602414,
+  "approx_percent": -0.4584067893458022,
+  "conventional_state_cluster_ci95_NOT_confirmatory": [
+    -0.045527892423773746,
+    0.03633867851805326
+  ],
+  "preperiod_placebos": [
+    {
+      "end_year": 2004,
+      "preperiod_difference_in_changes": 0.006520112424232671
+    },
+    {
+      "end_year": 2005,
+      "preperiod_difference_in_changes": -0.0027508187505187465
+    }
+  ],
+  "interpretation": "Conditional DiD estimate, not a certified causal policy finding. Only 3 treated states; conventional cluster confidence interval is not reliable for confirmatory inference. Pre-period placebo differences can flag problems, not prove parallel trends.",
+  "assumptions": [
+    "No anticipation",
+    "Unconditional parallel trends",
+    "No interstate spillovers",
+    "Stable county composition"
+  ],
+  "limits": [
+    "State-level effective sample much smaller than county count",
+    "No wild-cluster or randomization inference validated",
+    "No staggered TWFE across cohorts",
+    "Other time-varying policies unadjusted",
+    "Package distributes data under GPL (>=2); upstream attribution retained; no data resold"
+  ],
+  "mean_paths": [
+    {
+      "year": 2003,
+      "control": 5.654630022499832,
+      "treated": 6.573993628231014
+    },
+    {
+      "year": 2004,
+      "control": 5.591999998141901,
+      "treated": 6.517883716297315
+    },
+    {
+      "year": 2005,
+      "control": 5.60480843375399,
+      "treated": 6.527941333158886
+    },
+    {
+      "year": 2006,
+      "control": 5.638896282054665,
+      "treated": 6.557434574506696
+    },
+    {
+      "year": 2007,
+      "control": 5.661132540371089,
+      "treated": 6.543040968229766
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+name: Portfolio validation
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - run: python -m pip install -r requirements-portfolio.txt
+      - run: python -m pip check
+      - run: python -m ruff check causal_lab tests/test_pro_*.py tests/test_dashboard_planning.py
+      - run: python -m pytest -q

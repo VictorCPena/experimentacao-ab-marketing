@@ -1,0 +1,24 @@
+{
+  "source": "Causal Impact Lab(2).html",
+  "source_sha256": "01e978b34c2e46034bfb781512d8d9f8b502699758e8f2ddfd0cb991ccd8385f",
+  "source_type": "User-provided saved browser HTML",
+  "date_fortaleza": "2026-11-09",
+  "observed_markers": {
+    "sample_caption": "Criteo v2.1 • 139,815 sampled users • intention to treat",
+    "selected_ab_caption": "Unadjusted A/B outcome: visit. The selector applies only to this A/B result.",
+    "fixed_primary_header": "Cross-fitted estimates — visit",
+    "planning_caption": "Control 5.000% → treatment 5.500%; absolute MDE 0.005 = 0.500 percentage points.",
+    "sample_per_arm": "Required per arm (1:1, 80% power): 31218"
+  },
+  "sample_n": 139815,
+  "ab_selected": "visit",
+  "ab_absolute_difference": 0.011213496035108017,
+  "aipw_absolute_difference": 0.008703281473553032,
+  "aipw_ci95": [
+    0.006157421711510653,
+    0.011249141235595412
+  ],
+  "planning_mde": 0.005,
+  "planning_required_per_arm": 31218,
+  "scope": "Default visit state from a single HTML snapshot. The selector transition is covered separately by the existing Streamlit AppTest."
+}

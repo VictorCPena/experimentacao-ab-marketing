@@ -1,0 +1,12 @@
+{
+  "url": "https://huggingface.co/datasets/criteo/criteo-uplift/resolve/main/criteo-research-uplift-v2.1.csv.gz",
+  "source_rows": 13979592,
+  "sample_rows": 139815,
+  "fraction": 0.01,
+  "seed": 42,
+  "sampling": "Bernoulli over all rows, no outcome filtering",
+  "source_sha256": "2716e1bf0fd157a93b5bf86924d9088419dfbac2022c6cd90030220634f616dc",
+  "sample_sha256": "41be592755e2d29d037a6046abe6e1fb2f09d5d987542387ebe9176be2a10c76",
+  "license": "CC-BY-NC-SA-4.0",
+  "version": "Criteo unbiased v2.1"
+}

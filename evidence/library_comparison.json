@@ -1,0 +1,13 @@
+{
+  "sample_rows": 20000,
+  "seed": 7,
+  "outcome": "visit",
+  "dowhy_adjusted_linear_ate": 0.003811880715921312,
+  "econml_drlearner_heldout_mean_cate": 0.0034537280438453237,
+  "cate_quantiles": [
+    -0.018334540726949625,
+    0.0007417201845594796,
+    0.03529757590784146
+  ],
+  "limits": "Different model classes and 20k subsample; no interval coverage claim for EconML forest final stage. DoWhy graph encodes assumed sufficient adjustment; library does not prove absence of confounding."
+}
