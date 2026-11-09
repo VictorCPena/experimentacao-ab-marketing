@@ -1,0 +1,7 @@
+-r requirements-portfolio.txt
+--only-binary=numba,llvmlite
+numba==0.62.1; sys_platform == "darwin" and platform_machine == "x86_64"
+llvmlite==0.45.1; sys_platform == "darwin" and platform_machine == "x86_64"
+dowhy==0.14
+econml==0.17.0
+pyreadr==0.5.9
